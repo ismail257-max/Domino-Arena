@@ -11,26 +11,60 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
-import ForgotPasswordPage from './pages/ForgotPasswordPage';
-import ResetPasswordPage from './pages/ResetPasswordPage';
-import VerifyEmailPage from './pages/VerifyEmailPage';
+import WalletPage from './pages/WalletPage';
+import GameLobbyPage from './pages/GameLobbyPage';
+import GameBoardPage from './pages/GameBoardPage';
+import GameResultsPage from './pages/GameResultsPage';
 
 function AnimatedRoutes() {
   const location = useLocation();
+  
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
+        {/* Public routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        
+        {/* Protected routes */}
         <Route 
           path="/dashboard" 
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/wallet" 
+          element={
+            <ProtectedRoute>
+              <WalletPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/lobby" 
+          element={
+            <ProtectedRoute>
+              <GameLobbyPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/game/:id" 
+          element={
+            <ProtectedRoute>
+              <GameBoardPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/game/:id/results" 
+          element={
+            <ProtectedRoute>
+              <GameResultsPage />
             </ProtectedRoute>
           } 
         />
@@ -42,16 +76,20 @@ function AnimatedRoutes() {
 function App() {
   useEffect(() => {
     // Initialize sound effects when the app loads
-    initSounds();
+    if (process.env.REACT_APP_ENABLE_SOUNDS === 'true') {
+      initSounds();
+    }
   }, []);
 
   return (
     <Router>
       <AuthProvider>
-        <Navbar />
-        <main>
-          <AnimatedRoutes />
-        </main>
+        <div className="min-h-screen bg-dark text-light">
+          <Navbar />
+          <main>
+            <AnimatedRoutes />
+          </main>
+        </div>
       </AuthProvider>
     </Router>
   );

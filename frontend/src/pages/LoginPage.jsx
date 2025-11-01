@@ -36,9 +36,12 @@ const LoginPage = () => {
     try {
       await login(email.trim().toLowerCase(), password);
       setToast({ message: 'Login successful! Redirecting...', type: 'success' });
-      setTimeout(() => navigate('/dashboard'), 1500);
+      // Wait a bit before navigating to show success message
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1000);
     } catch (error) {
-      // Show user-friendly error message
+      // Show specific error message from backend or generic one
       const errorMessage = error.message || 'Your email or password is incorrect. Please try again.';
       setToast({ message: errorMessage, type: 'error' });
     }

@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
       setUser(data.user);
       return data;
     } catch (err) {
-      const errorMessage = err.response?.data?.message || 'Login failed. Please try again.';
+      const errorMessage = err.response?.data?.message || err.message || 'Login failed. Please try again.';
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
       setUser(data.user);
       return data;
     } catch (err) {
-      const errorMessage = err.response?.data?.message || 'Registration failed. Please try again.';
+      const errorMessage = err.response?.data?.message || err.message || 'Registration failed. Please try again.';
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {
@@ -57,8 +57,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    await authService.logout();
-    setUser(null);
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Always clear user state, even if API call fails
+      setUser(null);
+      setError(null);
+    }
   };
 
   const value = {
@@ -72,7 +79,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Render a loading screen while checking auth status initially
-  if (loading && !user) {
+  if (loading && user === null) {
     return (
         <div className="min-h-screen flex items-center justify-center bg-dark">
             <LoadingSpinner size="lg" />
